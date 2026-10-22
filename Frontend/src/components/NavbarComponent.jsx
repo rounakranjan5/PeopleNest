@@ -8,51 +8,85 @@ import {
   NavbarToggle,
 } from "flowbite-react";
 
-import logo from '../assets/PeopleNest-logo.png'
+import logo from "../assets/PeopleNest-logo.png";
 
-const NavbarComponent = () => {
+const NavbarComponent = ({ minimal = false }) => {
   return (
-    <Navbar fluid className="pn-navbar px-4 py-3 sm:px-6 sm:py-2 lg:px-10">
-      <NavbarBrand href="/" className="gap-2">
-        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-(--pn-primary) text-lg font-bold text-white">
-          <img src={logo} alt="Logo"/>
-        </div>
+    <Navbar
+      fluid
+      className="pn-navbar relative px-5 py-3 sm:px-8 lg:px-10"
+    >
+      <NavbarBrand href="/" className="shrink-0 gap-2">
+        <img
+          src={logo}
+          alt="PeopleNest Logo"
+          className="h-9 w-9 object-contain"
+        />
 
-        <span className="pn-brand text-xl sm:text-2xl">
+        <span className="pn-brand text-lg font-bold sm:text-xl">
           PeopleNest
         </span>
       </NavbarBrand>
 
-      <div className="flex items-center gap-3 md:order-2">
-        <Button
-          className="pn-btn pn-btn-primary hidden sm:inline-flex"
-          onClick={() => {
-            window.location.href = "/signup";
-          }}
-        >
-          Sign Up
-        </Button>
+      {!minimal && (
+        <>
+          <div className="flex items-center gap-3 md:order-2">
+            <div className="hidden items-center gap-2 md:flex">
+              <Button
+                color="light"
+                className="pn-login-btn bg-transparent text-sm font-medium"
+                onClick={() => {
+                  window.location.href = "/login";
+                }}
+              >
+                Log In
+              </Button>
 
-        <NavbarToggle />
-      </div>
+              <Button
+                className="pn-btn pn-btn-primary text-sm"
+                onClick={() => {
+                  window.location.href = "/signup";
+                }}
+              >
+                Sign Up
+              </Button>
+            </div>
 
-      <NavbarCollapse className="md:flex md:items-center md:gap-2">
-        <NavbarLink href="/" className="pn-nav-link">
-          Home
-        </NavbarLink>
+            <NavbarToggle />
+          </div>
 
-        <NavbarLink href="/features" className="pn-nav-link">
-          Features
-        </NavbarLink>
+          <NavbarCollapse className="md:order-1 md:absolute md:left-1/2 md:top-1/2 md:-translate-x-1/2 md:-translate-y-1/2">
+            <NavbarLink href="/" className="pn-nav-link">
+              Home
+            </NavbarLink>
 
-        <NavbarLink href="/about" className="pn-nav-link">
-          About
-        </NavbarLink>
+            <NavbarLink
+              className="pn-nav-link"
+              onClick={() => {
+                document.getElementById("features")?.scrollIntoView({
+                  behavior: "smooth",
+                });
+              }}
+            >
+              Features
+            </NavbarLink>
 
-        <NavbarLink href="/login" className="pn-nav-link">
-          Login
-        </NavbarLink>
-      </NavbarCollapse>
+            <NavbarLink href="/about" className="pn-nav-link">
+              About
+            </NavbarLink>
+
+            <div className="flex flex-col gap-2 md:hidden">
+              <NavbarLink href="/login" className="pn-nav-link">
+                Log In
+              </NavbarLink>
+
+              <NavbarLink href="/signup" className="pn-nav-link">
+                Sign Up
+              </NavbarLink>
+            </div>
+          </NavbarCollapse>
+        </>
+      )}
     </Navbar>
   );
 };
