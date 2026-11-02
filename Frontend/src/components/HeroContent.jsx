@@ -1,8 +1,11 @@
 
 import { Button } from "flowbite-react";
 import illustration from "../assets/illustration.png";
+import { useNavigate } from "react-router";
 
 const HeroContent = () => {
+  const navigate = useNavigate();
+
   return (
     <section className="flex flex-col lg:flex-row items-center justify-between gap-10 lg:gap-12 bg-[#F8FAF7] px-6 py-12 sm:px-10 lg:px-16 lg:py-16">
 
@@ -27,7 +30,7 @@ const HeroContent = () => {
             color="green"
             className="bg-[#176B5B] text-white hover:bg-[#124D43] focus:ring-2 focus:ring-[#176B5B]"
             onClick={() => {
-              window.location.href = "/signup";
+              navigate("/signup");
             }}
           >
             Get Started Free

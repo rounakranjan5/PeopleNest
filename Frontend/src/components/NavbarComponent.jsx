@@ -9,8 +9,11 @@ import {
 } from "flowbite-react";
 
 import logo from "../assets/PeopleNest-logo.png";
+import { useNavigate } from "react-router";
 
 const NavbarComponent = ({ minimal = false }) => {
+  const navigate = useNavigate();
+
   return (
     <Navbar
       fluid
@@ -36,7 +39,7 @@ const NavbarComponent = ({ minimal = false }) => {
                 color="light"
                 className="pn-login-btn bg-transparent text-sm font-medium"
                 onClick={() => {
-                  window.location.href = "/login";
+                  navigate("/login");
                 }}
               >
                 Log In
@@ -45,7 +48,7 @@ const NavbarComponent = ({ minimal = false }) => {
               <Button
                 className="pn-btn pn-btn-primary text-sm"
                 onClick={() => {
-                  window.location.href = "/signup";
+                  navigate("/signup");
                 }}
               >
                 Sign Up

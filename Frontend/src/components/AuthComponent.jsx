@@ -1,9 +1,52 @@
 import loginIllustration from "../assets/login-illustration.png";
 import signupIllustration from "../assets/signup-illustration.png";
+import { ENV } from "../config/env";
+import { useNavigate } from "react-router";
+import { useState } from "react";
 
 const AuthComponent = ({ mode = "login" }) => {
   const isSignup = mode === "signup";
   const illustration = isSignup ? signupIllustration : loginIllustration;
+  const navigate = useNavigate();
+  const [errors, setErrors] = useState({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    setErrors({});
+
+    if (!isSignup) {
+      setErrors({ form: "Log in is not available yet." });
+      return;
+    }
+
+    const formData = new FormData(event.currentTarget);
+    const payload = Object.fromEntries(formData.entries());
+    setIsSubmitting(true);
+
+    try {
+      const response = await fetch(`${ENV.API_BASE_URL}/user/signup`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      const result = await response.json();
+
+      if (!response.ok) {
+        setErrors(result.errors ?? { form: result.message ?? "Unable to create your account." });
+        return;
+      }
+
+      localStorage.setItem("peopleNestUser", JSON.stringify(result));
+      navigate("/dashboard");
+    } catch {
+      setErrors({ form: "Could not connect to the server. Please try again." });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const fieldError = (field) => errors[field];
 
   return (
     <main className="min-h-screen bg-[#FBF8F1] px-4 py-6 sm:px-8 lg:px-12">
@@ -38,7 +81,7 @@ const AuthComponent = ({ mode = "login" }) => {
                 : "Enter your details to get started."}
             </p>
 
-            <form className="mt-8 space-y-4">
+            <form className="mt-8 space-y-4" onSubmit={handleSubmit}>
               {isSignup && (
                 <label className="block text-sm font-medium text-[#102F35]">
                   Full Name
@@ -47,8 +90,11 @@ const AuthComponent = ({ mode = "login" }) => {
                     name="name"
                     placeholder="Enter your full name"
                     className="pn-input mt-2"
+                    aria-invalid={Boolean(fieldError("name"))}
+                    aria-describedby={fieldError("name") ? "name-error" : undefined}
                     required
                   />
+                  {fieldError("name") && <span id="name-error" className="mt-1 block text-sm text-red-600">{fieldError("name")}</span>}
                 </label>
               )}
 
@@ -59,8 +105,11 @@ const AuthComponent = ({ mode = "login" }) => {
                   name="email"
                   placeholder="you@example.com"
                   className="pn-input mt-2"
+                  aria-invalid={Boolean(fieldError("email"))}
+                  aria-describedby={fieldError("email") ? "email-error" : undefined}
                   required
                 />
+                {fieldError("email") && <span id="email-error" className="mt-1 block text-sm text-red-600">{fieldError("email")}</span>}
               </label>
 
               <label className="block text-sm font-medium text-[#102F35]">
@@ -70,8 +119,11 @@ const AuthComponent = ({ mode = "login" }) => {
                   name="password"
                   placeholder={isSignup ? "Create a password" : "Enter your password"}
                   className="pn-input mt-2"
+                  aria-invalid={Boolean(fieldError("password"))}
+                  aria-describedby={fieldError("password") ? "password-error" : undefined}
                   required
                 />
+                {fieldError("password") && <span id="password-error" className="mt-1 block text-sm text-red-600">{fieldError("password")}</span>}
               </label>
 
               {!isSignup && (
@@ -83,8 +135,10 @@ const AuthComponent = ({ mode = "login" }) => {
                 </div>
               )}
 
-              <button type="submit" className="pn-btn pn-btn-primary w-full">
-                {isSignup ? "Create Account" : "Log In"}
+              {errors.form && <p role="alert" className="text-sm text-red-600">{errors.form}</p>}
+
+              <button type="submit" className="pn-btn pn-btn-primary w-full" disabled={isSubmitting}>
+                {isSubmitting ? "Creating Account..." : isSignup ? "Create Account" : "Log In"}
               </button>
             </form>
 
